@@ -1,0 +1,100 @@
+<div ng-controller="reply365Controller">
+	<section class="tweet-main row" ng-repeat="page in pages">
+		<div  class="col-md-5">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<span>{{page.name}}</span><span>{{page.url}}</span>
+					</h3>
+				</div>
+			</div>
+
+			<!-- <button class="btn btn-primary fr"
+				ng-show="status.audio.isPlay"
+				ng-click="audio.stop()">关闭音乐</button>
+
+			<button class="btn btn-primary"
+
+				ng-click="start('tweet')">开始抓取</button>
+			<button class="btn btn-danger"
+				ng-disabled="status.tweet.isStop"
+				ng-click="stop('tweet')">停止抓取</button> -->
+
+				<button class="btn btn-primary" ng-click="start('tweet')">开始抓取</button>
+
+			<span>{{updateTime}}</span>
+			<div class="tweet-terminal-wrapper">
+				<div class="terminal-progress">
+					<div class="progress progress-striped active">
+					  <div class="progress-bar progress-bar-info terminal-wait" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" ng-class="{'terminal-get': status.tweet.isProgress}">
+					    <span class="sr-only"></span>
+					  </div>
+					</div>
+				</div>
+
+				<ul class="terminal-list form-control list-unstyled" style="display: none;">
+					<li ng-repeat="log in logs.list">
+						<span ng-if="log.blank" class="log-blank"></span>
+						<span ng-if="log.time" class="log-time">{{log.time}}</span>
+						<span ng-if="log.tip" class="log-tip">{{log.tip}}</span>
+						<span ng-if="log.content" class="log-content">{{log.content}}</span>
+					</li>
+				</ul>
+
+				<table class="table table-striped" style="font-size: 10px;">
+					<thead>
+						<tr class="active">
+							<th>时间</th>
+							<th>联赛</th>
+							<th>比赛</th>
+							<th>发布时间</th>
+							<th>连续</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="game in target.tops" ng-if="game.team">
+							<td>{{game.time}}</td>
+							<td>{{game.union}}</td>
+							<td>{{game.team}}</td>
+							<td>{{game.publish}}</td>
+							<td><span class="red red-hot" ng-repeat="count in game.redCount track by $index"></span></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+		</div>
+		<div class="col-md-7">
+			<div class="results">
+				<div ng-repeat="item in target.results">
+					<h3>{{item.name}}</h3>
+					<table class="table table-bordered">
+						<thead>
+							<tr class="active">
+								<th>时间</th>
+								<th>联赛</th>
+								<th>比赛</th>
+								<th>发布时间</th>
+								<th>结果</th>
+								<th>其他</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="game in item.data">
+								<td>{{game.time}}</td>
+								<td>{{game.union}}</td>
+								<td>{{game.team}}</td>
+								<td>{{game.publish}}</td>
+								<td ng-class="{red: game.isRed}">{{game.result}}</td>
+								<td></td>
+							</tr>
+						</tbody>
+					</table>
+
+				</div>
+			</div>
+		</div>
+	</section>
+
+
+</div>
