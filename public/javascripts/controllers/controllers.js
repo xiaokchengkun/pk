@@ -37,22 +37,43 @@ controllers.controller("reply365Controller", ["$scope", "reply365Service", "$fil
 		};
 		$scope.timer = {};
 
-		$scope.start = function(type){
-			$scope.status[type].isStop = false;
-			$scope.audio.stop();
-			$scope.getTweet();
-			setInterval(function(){
-				$scope.getTweet();
-			}, 1000 * 60 *5);
+		var time;
+		var progressFunc = function(page){
+			if(time){
+				return;
+			}
+			time = setInterval(function(){
+				page.progress += 1
+				console.log(page.progress);
+				$scope.$apply('page.progress');
+			}, 1000 * 60 *5 / 100);
 		};
 
-		$scope.getTweet = function(){
-			var query = {
-				uid: $scope.target.uid
-			};
-			reply365Service.getData("tweet", query).then(function(http){
+		var progressReset = function(){
+			if(time){
+				clearInterval(time);
+				time = null;
+			}
+		};
+
+		$scope.start = function(type, pageIndex){
+			$scope.status[type].isStop = false;
+			$scope.audio.stop();
+			page = $scope.pages[pageIndex]
+			$scope.getTweet(page);
+			setInterval(function(){
+				$scope.getTweet(page);
+			}, 1000 * 60 *5);
+			progressFunc(page);
+		};
+
+		$scope.getTweet = function(page){
+			progressReset();
+			page.progress = 0;
+			progressFunc(page);
+			reply365Service.getData("tweet").then(function(http){
 				var response = http.data;
-				$scope.updateTime = $filter('date')(new Date(), 'medium');
+				page.updateTime = $filter('date')(new Date(), 'medium');
 				if($.isPlainObject(response)){
 					if(response.errno == 6){
 					//if(response.errno == 3 || response.errno == 2 || response.errno == 6){
@@ -69,7 +90,6 @@ controllers.controller("reply365Controller", ["$scope", "reply365Service", "$fil
 						$scope.again("tweet");
 					}
 				}else{
-					console.log('again');
 					$scope.again("tweet");
 				}
 			});
@@ -185,7 +205,6 @@ controllers.directive("audioRemind", ["reply365Service",
 				});
 
 				scope.$watch("status.audio", function(){
-					console.log(scope.status.audio);
 					if(!scope.status.audio.isReady){
 						return;
 					}

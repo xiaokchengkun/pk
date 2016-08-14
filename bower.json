@@ -19,6 +19,7 @@
     "jquery": "*",
     "requirejs": "*",
     "bootstrap": "*",
+    "bulma": "*",
     "angular": "*",
     "angular-route": "*"
   }
