@@ -30,7 +30,9 @@ var reply365 = {
 		};
 
 		//this.url = url.parse(req.url);
-		this.url = 'http://www.pk2015.net/index.asp?class=4&t=' + new Date()
+		this.url = 'http://www.pk2015.net/index.asp?class=#{ID}&t=' + new Date()
+		var id = req.body.id;
+		this.url = this.url.replace('#{ID}', id);
 		//this.query 包含目标uid
 	    // this.query = req.body;
 	     this.callback = callback;
@@ -48,16 +50,12 @@ var reply365 = {
 			data: 10000
 		};
 
-		//开始干活！
-		this.log("开始干活！");
-
 		this.getData();
 	},
 
 	getData: function(){
 		var me = this;
 		var reqTimeout, resTimeout, req;
-		me.log("开始第" + counter.tweet +"次抓取最新微博...");
 		var url = me.url;
 		var buffers = [], size = 0;
 		req = http.get(url, function(response){
@@ -86,11 +84,19 @@ var reply365 = {
 			 var result = [];
 			 $list.each(function(index){
 				 $this = $(this);
-				 $img = $this.find('img[alt=精华主题]');
-				 if($img.length){
+				 $img1 = $this.find('img[alt=精华主题]');
+				 $img2 = $this.find('img[alt=优越连胜]');
+				 if($img1.length || $img2.length){
 					 var $name = $this.find('a[href^="So.asp"]');
 					 var $title = $this.find('ul[style="margin-left:40px;"]');
 					 var $goal = $this.find('ul[style="margin-left:80px;"]');
+					 var $goalList = $goal.slice();
+					 $goalList.each(function(index){
+						 var text = $(this).find('a[href^=Club_Thread]').text();
+						 if (text && !text.match(/\d(:|：|-|;|；)\d/)){
+							 $goal.splice(index, 1);
+						 }
+					 });
 					 var rel = {
 						 name: '',
 						 title: [],

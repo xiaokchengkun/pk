@@ -11,16 +11,16 @@ controllers.controller("reply365Controller", ["$scope", "reply365Service", "$fil
 
 		$scope.target = reply365Service.target;
 
-		$scope.musics = reply365Service.musics;
-
-		$scope.logs = reply365Service.logs;
-
 		$scope.selected = reply365Service.selected;
 
 		$scope.pages = [
 			{
-				url: 'http://www.pk2015.net/index.asp?class=4',
+				id: '4',
 				name: '新利18比赛区'
+			},
+			{
+				id: '1',
+				name: 'Vwin比赛区'
 			}
 		]
 
@@ -28,23 +28,18 @@ controllers.controller("reply365Controller", ["$scope", "reply365Service", "$fil
 			tweet: {
 				isStop: true,
 				isProgress: false
-			},
-			audio: {
-				isReady: false,
-				isPlay: false,
-				isStop: true
 			}
 		};
 		$scope.timer = {};
 
 		var time;
-		var progressFunc = function(page){
+		var progressFunc = function(){
 			if(time){
 				return;
 			}
 			time = setInterval(function(){
-				page.progress += 1
-				$scope.$apply('page.progress');
+				$scope.progress += 1
+				$scope.$apply('progress');
 			}, 1000 * 60 *5 / 100);
 		};
 
@@ -57,8 +52,13 @@ controllers.controller("reply365Controller", ["$scope", "reply365Service", "$fil
 
 		$scope.start = function(type, pageIndex){
 			$scope.status[type].isStop = false;
-			$scope.audio.stop();
-			page = $scope.pages[pageIndex]
+			$scope.pages.forEach(function(page){
+				page.isRunning = false;
+			});
+			page = $scope.pages[pageIndex];
+			page.isRunning = true;
+			$scope.target.tops = null;
+			$scope.target.results = [];
 			$scope.getTweet(page);
 			setInterval(function(){
 				$scope.getTweet(page);
@@ -68,17 +68,15 @@ controllers.controller("reply365Controller", ["$scope", "reply365Service", "$fil
 
 		$scope.getTweet = function(page){
 			progressReset();
-			page.progress = 0;
-			progressFunc(page);
-			reply365Service.getData("tweet").then(function(http){
+			$scope.progress = 0;
+			progressFunc();
+			reply365Service.getData("tweet", { "id": page.id }).then(function(http){
 				var response = http.data;
-				page.updateTime = $filter('date')(new Date(), 'yyyy-M-d H:m:s');
+				$scope.updateTime = $filter('date')(new Date(), 'M-d H:m:s');
 				if($.isPlainObject(response)){
 					if(response.errno == 6){
 					//if(response.errno == 3 || response.errno == 2 || response.errno == 6){
 						$scope.status.tweet.isStop = true;
-
-						$scope.audio.play();
 						//来个桌面提醒
 						//alert("有新消息！");
 						$scope.notice("tweet");

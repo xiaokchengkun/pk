@@ -54,16 +54,27 @@ services.factory("reply365Service", ["$http",
 							}
 							item.data.push(unit);
 							if(!isRed && unit.team.indexOf('QQ') === -1 && unit.team.indexOf('连胜') === -1){
-								var delta = new Date().getTime() - new Date(unit.publish).getTime();
+								var delta = new Date().getTime() - new Date(unit.publish.replace(/\-/g, '/')).getTime();
 								if(delta < 1000 * 60 * 60 * 20){
 									$.extend(tops[item.name], unit);
 								}
 							}
 						});
 					});
+					var array = [];
+					console.log(tops, array);
+					for (var key in tops){
+						var item = tops[key];
+						if(!item.time){
+							delete tops[key];
+						}else{
+							array.push(item);
+						}
+					}
+					console.log(tops, array);
 					$.extend(true, scope.target, {
 						results: target,
-						tops: tops
+						tops: array
 					});
 				});
 			}

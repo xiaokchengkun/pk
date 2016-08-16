@@ -44,6 +44,9 @@ h3{
 	padding: 15px;
 	position: relative;
 }
+.box .button{
+	margin-right: 10px;
+}
 .box progress{
 	position: absolute;
   left: 0;

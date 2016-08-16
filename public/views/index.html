@@ -1,25 +1,16 @@
 <div ng-controller="reply365Controller">
-	<section class="tweet-main columns" ng-repeat="page in pages">
+	<section class="tweet-main columns">
 		<div  class="column is-half">
 			<div class="box">
 				<h3 class="panel-title">
-					<a class="button is-success" ng-click="start('tweet', $index)">{{page.name}}</a>
-					<span class="fr button is-small is-success is-outlined" ng-if="page.updateTime">{{page.updateTime}}</span>
+					<a class="button is-success"
+						ng-repeat="page in pages"
+						ng-disabled="page.isRunning"
+						ng-click="start('tweet', $index)">{{page.name}}</a>
+					<span class="fr button is-small is-success is-outlined" ng-if="updateTime">{{updateTime}}</span>
 				</h3>
-				<progress class="progress is-danger" value="{{page.progress}}" max="100"></progress>
+				<progress class="progress is-danger" value="{{progress}}" max="100"></progress>
 			</div>
-
-			<!-- <button class="btn btn-primary fr"
-				ng-show="status.audio.isPlay"
-				ng-click="audio.stop()">关闭音乐</button>
-
-			<button class="btn btn-primary"
-
-				ng-click="start('tweet')">开始抓取</button>
-			<button class="btn btn-danger"
-				ng-disabled="status.tweet.isStop"
-				ng-click="stop('tweet')">停止抓取</button> -->
-
 
 			<div class="tweet-terminal-wrapper">
 				<div class="terminal-progress" style="display:none;">
@@ -29,15 +20,6 @@
 					  </div>
 					</div>
 				</div>
-
-				<ul class="terminal-list form-control list-unstyled" style="display: none;">
-					<li ng-repeat="log in logs.list">
-						<span ng-if="log.blank" class="log-blank"></span>
-						<span ng-if="log.time" class="log-time">{{log.time}}</span>
-						<span ng-if="log.tip" class="log-tip">{{log.tip}}</span>
-						<span ng-if="log.content" class="log-content">{{log.content}}</span>
-					</li>
-				</ul>
 				<table class="table is-striped" ng-show="target.tops">
 					<thead>
 						<tr class="active">
@@ -49,7 +31,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr ng-repeat="game in target.tops" ng-if="game.team">
+						<tr ng-repeat="game in target.tops | orderBy:'union'" ng-if="game.team">
 							<td>{{game.time}}</td>
 							<td>{{game.union}}</td>
 							<td>{{game.team}}</td>

@@ -20,11 +20,4 @@ module.exports = function(app) {
         });
     });
 
-    app.post("/ajax/reply365/getcomment", function(req, res){
-        console.log("comment!");
-        reply365.init(req, function(data){
-            res.send(data);
-        });
-    });
-
 };
