@@ -44,7 +44,6 @@ controllers.controller("reply365Controller", ["$scope", "reply365Service", "$fil
 			}
 			time = setInterval(function(){
 				page.progress += 1
-				console.log(page.progress);
 				$scope.$apply('page.progress');
 			}, 1000 * 60 *5 / 100);
 		};
@@ -73,7 +72,7 @@ controllers.controller("reply365Controller", ["$scope", "reply365Service", "$fil
 			progressFunc(page);
 			reply365Service.getData("tweet").then(function(http){
 				var response = http.data;
-				page.updateTime = $filter('date')(new Date(), 'medium');
+				page.updateTime = $filter('date')(new Date(), 'yyyy-M-d H:m:s');
 				if($.isPlainObject(response)){
 					if(response.errno == 6){
 					//if(response.errno == 3 || response.errno == 2 || response.errno == 6){

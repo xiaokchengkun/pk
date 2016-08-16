@@ -9,50 +9,13 @@ services.factory("reply365Service", ["$http",
 				rid: "", //目标最新微博的tid
 				random: Math.random()
 			},
-			users: [{
-				name: "xiaokchengkun",
-				uid: "3039594"
-			},{
-				name: "lc_treed",
-				uid: "2850662"
-			},{
-				name: "lvtest",
-				uid: "3784367"
-			}],
-
-			musics: [{
-				name: "We Are One",
-				uid: viewsUrl + "/we are one.mp3"
-			},{
-				name: "Drrr",
-				uid: viewsUrl + "/drrr.mp3"
-			}],
-
-			logs: {
-				list: [],
-				limit: 50
-			},
 
 			selected: {
-				user: {
-					name: "xiaokchengkun"
-				},
-				music: {
-					name: "We Are One",
-					uid: viewsUrl + "/we are one.mp3"
-				}
 			}
-
-		};
-		var domain = "http://cmwb.com";
-		var serviceUrlMap = {
-			target: domain + "/mylist/tahome.action?userid=" + reply365Service.target.uid
 		};
 
 		var clientUrlMap = {
-			tweet: "/ajax/reply365/gettweet",
-			comment: "/ajax/reply365/getcomment",
-			reply: domain + "/blog/commentSender.action"
+			tweet: "/ajax/reply365/gettweet"
 		};
 
 		var scope = reply365Service;
@@ -62,12 +25,7 @@ services.factory("reply365Service", ["$http",
 			getData: function(type, query){
 				return $http.post(clientUrlMap[type], query).success(function(response){
 					var errno = response.errno;
-					var logs = response.logs || [];
 					var target = response.target;
-					scope.logs.list = logs.concat(scope.logs.list);
-					if(scope.logs.list.length >= scope.logs.limit){
-						scope.logs.list.length = scope.logs.limit;
-					}
 					var tops = {};
 					$.each(target, function(index, item){
 						var title = item.title
@@ -95,8 +53,11 @@ services.factory("reply365Service", ["$http",
 								tops[item.name].redCount.push('|');
 							}
 							item.data.push(unit);
-							if(result === '----' && unit.team.indexOf('QQ') === -1){
-								$.extend(tops[item.name], unit);
+							if(!isRed && unit.team.indexOf('QQ') === -1 && unit.team.indexOf('连胜') === -1){
+								var delta = new Date().getTime() - new Date(unit.publish).getTime();
+								if(delta < 1000 * 60 * 60 * 20){
+									$.extend(tops[item.name], unit);
+								}
 							}
 						});
 					});
@@ -104,21 +65,7 @@ services.factory("reply365Service", ["$http",
 						results: target,
 						tops: tops
 					});
-					console.log(tops);
-					if(response.errno){
-
-					}
 				});
-			},
-			//前端form提交回复
-			reply: function(data){
-				$http.post(clientUrlMap.reply, data).success(function(response){
-					alert(response);
-				});
-			},
-
-			urls: function() {
-				return serviceUrlMap;
 			}
 		});
 
